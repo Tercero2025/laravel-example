@@ -14,8 +14,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-// Ya se importa automáticamente desde @/types
-
 export default function Roles({ roles = [] }: { roles?: Role[] }) {
     const { hasPermission } = usePermission();
     

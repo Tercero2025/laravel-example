@@ -15,12 +15,26 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        // Búsqueda por nombre o email
+        $search = $request->input('search', '');
+        
         // Excluir el usuario superadmin de la lista
-        $users = User::with('role')
-            ->where('is_superadmin', false)
-            ->get();
+        $query = User::with('role')
+            ->where('is_superadmin', false);
+            
+        // Aplicar búsqueda si se proporciona
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+        
+        // Paginar los resultados
+        $users = $query->paginate(10)
+            ->withQueryString();
         
         return Inertia::render('users/index', [
             'users' => $users

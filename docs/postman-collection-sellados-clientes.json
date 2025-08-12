@@ -1,0 +1,347 @@
+{
+  "info": {
+    "name": "Sellados Web - Clientes API",
+    "description": "Colección para probar el endpoint de clientes con autenticación de sesión y CSRF",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "user_email",
+      "value": "admin@ejemplo.com",
+      "type": "string"
+    },
+    {
+      "key": "user_password",
+      "value": "password",
+      "type": "string"
+    },
+    {
+      "key": "csrf_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🧪 Endpoints de Desarrollo (Sin Autenticación)",
+      "item": [
+        {
+          "name": "Test API",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/test",
+              "host": ["{{base_url}}"],
+              "path": ["api", "test"]
+            }
+          }
+        },
+        {
+          "name": "Listar Clientes (Dev)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/clients-dev",
+              "host": ["{{base_url}}"],
+              "path": ["api", "clients-dev"]
+            }
+          }
+        },
+        {
+          "name": "Cliente por CUIT (Dev)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/clients-dev/12345678901",
+              "host": ["{{base_url}}"],
+              "path": ["api", "clients-dev", "12345678901"]
+            }
+          }
+        }
+      ]
+    }
+  ],,
+    {
+      "name": "🔐 Endpoints con Autenticación",
+      "item": [
+    {
+      "name": "1. Obtener página de login (CSRF)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Extraer CSRF token del HTML",
+              "var responseBody = pm.response.text();",
+              "var csrfToken = responseBody.match(/name=\"csrf-token\" content=\"([^\"]+)\"/);",
+              "if (csrfToken) {",
+              "    pm.collectionVariables.set(\"csrf_token\", csrfToken[1]);",
+              "    console.log(\"CSRF Token obtenido: \" + csrfToken[1]);",
+              "} else {",
+              "    // Buscar en input hidden",
+              "    var hiddenToken = responseBody.match(/name=\"_token\" value=\"([^\"]+)\"/);",
+              "    if (hiddenToken) {",
+              "        pm.collectionVariables.set(\"csrf_token\", hiddenToken[1]);",
+              "        console.log(\"CSRF Token obtenido (hidden): \" + hiddenToken[1]);",
+              "    }",
+              "}",
+              "",
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/login",
+          "host": ["{{base_url}}"],
+          "path": ["login"]
+        }
+      }
+    },
+    {
+      "name": "2. Login con CSRF",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Login successful (redirect or 200)\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 302]);",
+              "});",
+              "",
+              "// Si hay redirección, el login fue exitoso",
+              "if (pm.response.code === 302) {",
+              "    console.log(\"Login exitoso - redirección detectada\");",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          },
+          {
+            "key": "Accept",
+            "value": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+          }
+        ],
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            {
+              "key": "email",
+              "value": "{{user_email}}",
+              "type": "text"
+            },
+            {
+              "key": "password",
+              "value": "{{user_password}}",
+              "type": "text"
+            },
+            {
+              "key": "_token",
+              "value": "{{csrf_token}}",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{base_url}}/login",
+          "host": ["{{base_url}}"],
+          "path": ["login"]
+        }
+      }
+    },
+    {
+      "name": "3. Listar clientes (JSON)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Response has data\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('data');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Requested-With",
+            "value": "XMLHttpRequest"
+          },
+          {
+            "key": "X-CSRF-TOKEN",
+            "value": "{{csrf_token}}"
+          },
+          {
+            "key": "X-Request-Filter",
+            "value": "other"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/clients",
+          "host": ["{{base_url}}"],
+          "path": ["clients"]
+        }
+      }
+    },
+    {
+      "name": "4. Buscar cliente específico",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200 or 201\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+              "});",
+              "",
+              "pm.test(\"Response is JSON\", function () {",
+              "    pm.response.to.be.json;",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-Requested-With",
+            "value": "XMLHttpRequest"
+          },
+          {
+            "key": "X-CSRF-TOKEN",
+            "value": "{{csrf_token}}"
+          },
+          {
+            "key": "Accept",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/clients?search=NOMBRE_CLIENTE",
+          "host": ["{{base_url}}"],
+          "path": ["clients"],
+          "query": [
+            {
+              "key": "search",
+              "value": "NOMBRE_CLIENTE",
+              "description": "Cambia por el nombre del cliente a buscar"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "5. API Cliente por CUIT (requiere Sanctum)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Esta ruta actualmente no funciona porque Sanctum no está instalado",
+              "pm.test(\"Status code (esperado 500 sin Sanctum)\", function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 401, 500]);",
+              "});",
+              "",
+              "if (pm.response.code === 500) {",
+              "    console.log(\"Error esperado - Laravel Sanctum no está instalado\");",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Accept",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer YOUR_TOKEN_HERE",
+            "disabled": true
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/clients/12345678901",
+          "host": ["{{base_url}}"],
+          "path": ["api", "clients", "12345678901"]
+        }
+      }
+    }
+  ],
+  "auth": {
+    "type": "noauth"
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Script global para verificar variables",
+          "console.log(\"Base URL: \" + pm.collectionVariables.get(\"base_url\"));",
+          "console.log(\"CSRF Token: \" + pm.collectionVariables.get(\"csrf_token\"));"
+        ]
+      }
+    }
+  ]
+}

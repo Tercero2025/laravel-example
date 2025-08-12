@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem, type Role } from '@/types';
+import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -17,7 +17,11 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-// Ya se importa desde @/types
+interface Role {
+    id: number;
+    name: string;
+    description: string;
+}
 
 export default function EditRole({ role }: { role: Role }) {
     const { data, setData, put, processing, errors } = useForm({

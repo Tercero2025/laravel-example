@@ -14,8 +14,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-// Ya se importa automáticamente desde @/types
-
 export default function Permissions({ permissions = [] }: { permissions?: Permission[] }) {
     const { hasPermission } = usePermission();
     

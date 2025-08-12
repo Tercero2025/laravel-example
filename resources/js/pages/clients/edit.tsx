@@ -18,103 +18,112 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 interface Client {
-    id: number;
-    name: string;
-    fullname: string;
+    razonsocial: string;
     cuit: string;
-    address?: string;
-    city?: string;
-    state?: string;
-    country?: string;
+    domicilio?: string;
+    localidad?: string;
+    telefono?: string;
+    mail?: string;
 }
 
 export default function EditClient({ client }: { client: Client }) {
     const { data, setData, put, processing, errors } = useForm({
-        name: client.name,
-        fullname: client.fullname,
+        razonsocial: client.razonsocial,
         cuit: client.cuit,
-        address: client.address || '',
-        city: client.city || '',
-        state: client.state || '',
-        country: client.country || '',
+        domicilio: client.domicilio || '',
+        localidad: client.localidad || '',
+        telefono: client.telefono || '',
+        mail: client.mail || '',
     });
 
     function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
-        put(route('clients.update', client.id));
+        put(route('clients.update', client.cuit));
     }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Edit Client" />
+            <Head title="Editar Cliente" />
 
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-xl font-semibold">Edit Client</h1>
+                    <h1 className="text-xl font-semibold">Editar Cliente</h1>
                 </div>
 
                 <div className="border-sidebar-border/70 dark:border-sidebar-border relative overflow-hidden rounded-xl border">
                     <form onSubmit={handleSubmit} className="space-y-6 p-6">
                         <div className="grid gap-6 md:grid-cols-2">
                             <div className="space-y-2">
-                                <Label htmlFor="name">Name</Label>
-                                <Input
-                                    id="name"
-                                    value={data.name}
-                                    onChange={e => setData('name', e.target.value)}
-                                />
-                                <InputError message={errors.name} />
-                            </div>
-
-                            <div className="space-y-2">
-                                <Label htmlFor="fullname">Full Name</Label>
-                                <Input
-                                    id="fullname"
-                                    value={data.fullname}
-                                    onChange={e => setData('fullname', e.target.value)}
-                                />
-                                <InputError message={errors.fullname} />
-                            </div>
-
-                            <div className="space-y-2">
                                 <Label htmlFor="cuit">CUIT</Label>
                                 <Input
+                                    readOnly
                                     id="cuit"
                                     value={data.cuit}
                                     onChange={e => setData('cuit', e.target.value)}
-                                />
+                                    />
                                 <InputError message={errors.cuit} />
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="address">Address</Label>
+                                <Label htmlFor="razonsocial">Razón Social</Label>
                                 <Input
-                                    id="address"
-                                    value={data.address}
-                                    onChange={e => setData('address', e.target.value)}
+                                    id="razonsocial"
+                                    value={data.razonsocial}
+                                    onChange={e => setData('razonsocial', e.target.value)}
+                                    className='uppercase'
                                 />
-                                <InputError message={errors.address} />
+                                <InputError message={errors.razonsocial} />
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="city">City</Label>
+                                <Label htmlFor="domicilio">Domicilio</Label>
                                 <Input
-                                    id="city"
-                                    value={data.city}
-                                    onChange={e => setData('city', e.target.value)}
+                                    id="domicilio"
+                                    value={data.domicilio}
+                                    onChange={e => setData('domicilio', e.target.value)}
                                 />
-                                <InputError message={errors.city} />
+                                <InputError message={errors.domicilio} />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="localidad">Localidad</Label>
+                                <Input
+                                    id="localidad"
+                                    value={data.localidad}
+                                    onChange={e => setData('localidad', e.target.value)}
+                                />
+                                <InputError message={errors.localidad} />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="telefono">Teléfono</Label>
+                                <Input
+                                    id="telefono"
+                                    value={data.telefono}
+                                    onChange={e => setData('telefono', e.target.value)}
+                                />
+                                <InputError message={errors.telefono} />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label htmlFor="mail">Mail</Label>
+                                <Input
+                                    id="mail"
+                                    value={data.mail}
+                                    onChange={e => setData('mail', e.target.value)}
+                                />
+                                <InputError message={errors.mail} />
                             </div>
                         </div>
 
                         <div className="flex justify-end gap-4">
                             <Link href={route('clients.index')}>
                                 <Button variant="outline" type="button">
-                                    Cancel
+                                    Cancelar
                                 </Button>
                             </Link>
                             <Button type="submit" disabled={processing}>
-                                Update Client
+                                Actualizar Cliente
                             </Button>
                         </div>
                     </form>

@@ -1,34 +1,75 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <style>
-        body { font-family: 'DejaVu Sans', sans-serif; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background-color: #f3f4f6; }
+        body {
+            font-family: 'DejaVu Sans', sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 4px 6px;
+            text-align: left;
+            font-size: 9px;
+            line-height: 1.2;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+            font-weight: bold;
+            font-size: 9px;
+        }
+        
+        tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #ffffff;
+        }
     </style>
 </head>
-<body>
-    <h1>Clients Lista</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Full Name</th>
-                <th>CUIT</th>
-                <th>City</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($clients as $client)
+
+<body style="margin: 0; padding: 0;">
+    <div class="title" style="text-align:center;font-size:14px;font-weight:bold;margin-bottom:5px;">Listado de Clientes
+    </div>
+    @php $perPage = 27; @endphp
+    @foreach ($clients->chunk($perPage) as $chunk)
+        <table style="width:100%;border-collapse:collapse;margin-top:5px;">
+            <thead>
                 <tr>
-                    <td>{{ $client['name'] }}</td>
-                    <td>{{ $client['fullname'] }}</td>
-                    <td>{{ $client['cuit'] }}</td>
-                    <td>{{ $client['city'] }}</td>
+                    <th>RAZON SOCIAL</th>
+                    <th>DOMICILIO</th>
+                    <th>TELEFONO</th>
+                    <th>LOCALIDAD</th>
                 </tr>
-            @endforeach
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach ($chunk as $client)
+                    <tr style="height: 16px;">
+                        <td style="font-weight:bold;">{{ strtoupper($client->razonsocial) }}</td>
+                        <td>{{ $client->domicilio }}</td>
+                        <td>{{ $client->telefono }}</td>
+                        <td>{{ strtoupper($client->localidad) }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+        @if (!$loop->last)
+            <div style="page-break-after: always;"></div>
+        @endif
+    @endforeach
 </body>
+
 </html>

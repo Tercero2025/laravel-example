@@ -1,11 +1,16 @@
 <?php
 
 use App\Http\Controllers\ClientPdfController;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('welcome');
+    return Inertia::render('welcome', [
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+        'author' => env('APP_AUTHOR', 'Desconocido'),
+    ]);
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -24,3 +29,4 @@ require __DIR__.'/roles.php';
 require __DIR__.'/permissions.php';
 require __DIR__.'/roles-permissions.php';
 require __DIR__.'/users.php';
+require __DIR__.'/news.php';

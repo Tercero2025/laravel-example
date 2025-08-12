@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba de Noticias - SelladosWeb</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .news-item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #fafafa;
+        }
+        .news-item h3 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        .news-item p {
+            color: #666;
+            line-height: 1.6;
+        }
+        .news-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9em;
+            color: #888;
+            margin-top: 10px;
+        }
+        .news-image {
+            width: 100%;
+            max-width: 200px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 4px;
+            float: right;
+            margin-left: 15px;
+        }
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+        }
+        .error {
+            text-align: center;
+            padding: 50px;
+            color: #d32f2f;
+            background-color: #ffebee;
+            border-radius: 4px;
+        }
+        .success {
+            text-align: center;
+            padding: 20px;
+            color: #388e3c;
+            background-color: #e8f5e8;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Prueba de Integración - API de Noticias Rurales</h1>
+        <div id="status"></div>
+        <div id="news-container"></div>
+    </div>
+
+    <script>
+        async function fetchNews() {
+            const statusDiv = document.getElementById('status');
+            const newsContainer = document.getElementById('news-container');
+            
+            statusDiv.innerHTML = '<div class="loading">Cargando noticias...</div>';
+            
+            try {
+                const response = await fetch('/api/news/rural', {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.results && data.results.length > 0) {
+                    statusDiv.innerHTML = `<div class="success">✅ Conexión exitosa! Se obtuvieron ${data.results.length} noticias</div>`;
+                    
+                    newsContainer.innerHTML = data.results.map(article => `
+                        <div class="news-item">
+                            ${article.image ? `<img src="${article.image}" alt="${article.title}" class="news-image" onerror="this.style.display='none'">` : ''}
+                            <h3>${article.title}</h3>
+                            <p>${article.description}</p>
+                            <div class="news-meta">
+                                <span>📅 ${new Date(article.published_at).toLocaleDateString('es-ES')}</span>
+                                <span>🗞️ ${article.author || article.source?.domain || 'Fuente desconocida'}</span>
+                                <span>🌐 ${article.language}</span>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    statusDiv.innerHTML = '<div class="error">❌ No se encontraron noticias</div>';
+                }
+            } catch (error) {
+                console.error('Error fetching news:', error);
+                statusDiv.innerHTML = `<div class="error">❌ Error al cargar las noticias: ${error.message}</div>`;
+            }
+        }
+
+        // Cargar noticias al iniciar la página
+        fetchNews();
+    </script>
+</body>
+</html>

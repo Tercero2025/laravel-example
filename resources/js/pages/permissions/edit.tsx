@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem, type Permission } from '@/types';
+import { type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -20,7 +20,13 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 const HTTP_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
 
-// Ya se importa desde @/types
+interface Permission {
+    id: number;
+    name: string;
+    endpoint: string;
+    method: string;
+    description: string;
+}
 
 export default function EditPermission({ permission }: { permission: Permission }) {
     const { data, setData, put, processing, errors } = useForm({

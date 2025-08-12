@@ -2,11 +2,12 @@ import { LucideIcon } from 'lucide-react';
 import type { Config } from 'ziggy-js';
 import { Page } from '@inertiajs/core';
 
+// Importar para uso interno
 export type { Auth } from './auth.d';
 export type { Permission } from './permission.d';
 export type { Role } from './role.d';
 export type { User } from './user.d';
-export type { Client } from './client.d';
+export type { EndpointGroup } from './endpoint-group.d';
 
 export interface BreadcrumbItem {
     title: string;
@@ -37,6 +38,9 @@ export interface SharedData {
     sidebarOpen: boolean;
     [key: string]: unknown;
 }
+
+
+
 
 export interface InertiaPageProps {
     auth: {

@@ -5,7 +5,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, Sid
 import { usePermission } from '@/hooks/usePermission';
 import { type NavItem, type InertiaPageProps } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, Shield, Users, User2, Lock, UserCheck2 } from 'lucide-react';
+import { BookOpen, IdCard, Fingerprint, Folder, LayoutGrid, Shield, Users, Lock, FileText, Wheat, DollarSign, User2, BadgeDollarSign, BadgeEuro, Calculator } from 'lucide-react';
 import AppLogo from './app-logo';
 
 const mainNavItems: NavItem[] = [
@@ -18,23 +18,24 @@ const mainNavItems: NavItem[] = [
         title: 'Clientes',
         href: '/clients',
         icon: Users,
-    },
+    }
 ];
 
 const superAdminNavItems: NavItem[] = [
     {
         title: 'Roles',
         href: '/roles',
-        icon: UserCheck2,
+        icon: Users,
     },
     {
         title: 'Permissions',
         href: '/permissions',
         icon: Lock,
-    },
+    }
 ];
 
 const adminNavItems: NavItem[] = [
+
     {
         title: 'Roles Permissions',
         href: '/roles-permissions',
@@ -44,7 +45,7 @@ const adminNavItems: NavItem[] = [
         title: 'Users',
         href: '/users',
         icon: User2,
-    },
+    }
 ];
 
 const footerNavItems: NavItem[] = [
@@ -63,19 +64,19 @@ const footerNavItems: NavItem[] = [
 export function AppSidebar() {
     const { auth } = usePage<InertiaPageProps>().props;
     const { hasPermission } = usePermission();
-    
+
     // Verificamos primero si auth.user existe y luego si tiene role antes de acceder a name
     const isSuperAdmin = auth?.user?.is_superadmin === true || auth?.user?.role?.name === 'superadmin';
     const isAdmin = auth?.user?.is_superadmin === true || auth?.user?.role?.name === 'admin';
-    
+
     // Creamos elementos de navegación basados en permisos
     let navItems = [...mainNavItems]; // Siempre incluimos los elementos principales
-    
+
     // Añadimos elementos de administración según permisos
     if (isSuperAdmin || hasPermission('view_roles')) {
         navItems = [...superAdminNavItems, ...navItems];
     }
-    
+
     if (isAdmin || hasPermission('view_roles_permissions')) {
         navItems = [...adminNavItems, ...navItems];
     }
@@ -86,7 +87,7 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href="/dashboard" prefetch>
+                            <Link href="/" prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>
