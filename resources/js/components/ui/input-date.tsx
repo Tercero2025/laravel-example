@@ -1,4 +1,3 @@
-import React from "react"
 import { Input } from "./input"
 import { Label } from "./label"
 import { cn } from "@/lib/utils"

@@ -14,7 +14,9 @@ Repositorio para hacer un test de conexion con Supabase
 
 *`php artisan db:seed`
 
-*`composer dev`
+*`composer devl - Para Linux o Mac`
+
+*`composer devw - Para Windows`
 
 ## Para conectarse con Supabase (Postgress)
 
